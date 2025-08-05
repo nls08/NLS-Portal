@@ -7,7 +7,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "https://nls-portal-psi.vercel.app/",
+        target: "https://nls-portal-psi.vercel.app",
         changeOrigin: true,
       },
       "/ws": {

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://nls-portal-psi.vercel.app//api";
+const API_BASE_URL = "https://nls-portal-psi.vercel.app/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
