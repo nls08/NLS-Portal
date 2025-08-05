@@ -30,13 +30,11 @@ import clientMilestoneRoutes from "./routes/clientMilestone.js";
 import adminRoutes from "./routes/admin.js";
 
 const app = express();
-const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
 
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CORS_ORIGIN || "*", // Update with deployed domain or use env variable
     credentials: true,
   })
 );
@@ -49,37 +47,17 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// WebSocket connection handling
+// WebSocket handling (note: WebSockets are tricky on Vercel; consider alternatives like Server-Sent Events)
 const clients = new Map();
 
-wss.on("connection", (ws) => {
-  console.log("New WebSocket connection");
+// This is a placeholder; Vercel doesn't support WebSocket servers natively
+// You might need to use a different approach (e.g., polling or external WebSocket service)
+const wss = {}; // Disabled for now
 
-  ws.on("message", (message) => {
-    try {
-      const data = JSON.parse(message);
-      if (data.type === "auth") {
-        clients.set(ws, {
-          userId: data.userId,
-          userName: data.userName,
-        });
-        console.log(`User ${data.userName} connected`);
-      }
-    } catch (error) {
-      console.error("WebSocket message error:", error);
-    }
-  });
-
-  ws.on("close", () => {
-    clients.delete(ws);
-    console.log("WebSocket connection closed");
-  });
-});
-
-// Broadcast function for real-time notifications
+// Broadcast function (placeholder)
 export const broadcast = (message) => {
   clients.forEach((client, ws) => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws?.readyState === 1) {
       ws.send(JSON.stringify(message));
     }
   });
@@ -155,9 +133,5 @@ app.use("/api/cloudinary", uploadRoutes);
 app.use("/api/client-milestones", clientMilestoneRoutes);
 app.use("/api/admin", adminRoutes);
 
-const PORT = process.env.PORT || 5000;
-
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`WebSocket server running on ws://localhost:${PORT}`);
-});
+// Export for Vercel
+export default app;
