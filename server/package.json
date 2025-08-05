@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "build": "cp src/server.js dist/server.js && echo 'Build complete'"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.1.6",
