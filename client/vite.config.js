@@ -11,7 +11,8 @@ export default defineConfig({
         changeOrigin: true,
       },
       "/ws": {
-        target: "ws://localhost:5000",
+        // target: "ws://localhost:5000",
+        target: "ws://nls-portal-psi.vercel.app",
         ws: true,
       },
     },
