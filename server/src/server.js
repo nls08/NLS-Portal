@@ -121,3 +121,4 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`WebSocket server running on ws://localhost:${PORT}`);
 });
+export default server; // Add this line to export the server
