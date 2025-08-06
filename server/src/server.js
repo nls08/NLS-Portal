@@ -29,8 +29,6 @@ import uploadRoutes from "./routes/uploads.js";
 import clientMilestoneRoutes from "./routes/clientMilestone.js";
 import adminRoutes from "./routes/admin.js";
 
-// dotenv.config();
-
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
@@ -121,4 +119,5 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`WebSocket server running on ws://localhost:${PORT}`);
 });
-export default server; // Add this line to export the server
+
+export default server;
