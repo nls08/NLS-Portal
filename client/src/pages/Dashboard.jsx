@@ -32,7 +32,14 @@ ChartJS.register(
   ArcElement
 );
 
-const StatCard = ({ icon: Icon, title, value, subtitle, color = "blue", trend }) => (
+const StatCard = ({
+  icon: Icon,
+  title,
+  value,
+  subtitle,
+  color = "blue",
+  trend,
+}) => (
   <div className="card hover:shadow-md transition-shadow duration-200">
     <div className="flex items-center justify-between">
       <div>
@@ -43,9 +50,7 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = "blue", trend })
           {value}
         </p>
         {subtitle && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {subtitle}
-          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>
         )}
       </div>
       <div className={`p-3 rounded-lg bg-${color}-100 dark:bg-${color}-900`}>
@@ -121,65 +126,10 @@ const RecentActivity = () => {
   );
 };
 
-const RedZoneAlerts = ({ redZone }) => {
-  const alerts = [
-    {
-      id: 1,
-      employee: "Alex Brown",
-      issue: "Behind on 3 tasks",
-      severity: "high",
-    },
-    {
-      id: 2,
-      employee: "Lisa Davis",
-      issue: "Missed 2 deadlines",
-      severity: "medium",
-    },
-  ];
-
-  return (
-    <div className="card border-l-4 border-red-500">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Red Zone Alerts
-        </h3>
-        <AlertTriangle className="w-5 h-5 text-red-500" />
-      </div>
-      <div className="space-y-3">
-        {alerts.map((alert) => (
-          <div
-            key={alert.id}
-            className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg"
-          >
-            <div>
-              <p className="font-medium text-gray-900 dark:text-white">
-                {alert.employee}
-              </p>
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {alert.issue}
-              </p>
-            </div>
-            <span
-              className={`px-2 py-1 text-xs font-medium rounded-full ${alert.severity === "high"
-                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                }`}
-            >
-              {alert.severity}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 const Dashboard = () => {
-  // const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
-
-  const { stats, setStats, fetchStats, fetchEntries, redZoneEntries } = useApp();
-
+  const { stats, setStats, fetchStats, fetchEntries, redZoneEntries } =
+    useApp();
 
   useEffect(() => {
     fetchStats();
@@ -187,30 +137,47 @@ const Dashboard = () => {
   }, []);
 
   if (error) {
-    return <div className="text-red-500">Error loading dashboard: {error.message}</div>;
+    return (
+      <div className="text-red-500">
+        Error loading dashboard: {error.message}
+      </div>
+    );
   }
 
   if (!stats) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <Loader className="animate-spin text-white" size={50} />
-    </div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader className="animate-spin text-white" size={50} />
+      </div>
+    );
   }
 
-  // Example chart data (you’ll want to replace data arrays dynamically if available)
   const projectProgressData = {
-    labels: ["Web App", "Mobile App", "API Dev", "UI/UX", "Testing"],
+    labels: stats.projectProgress?.map((p) => p.name) || [
+      "Web App",
+      "Mobile App",
+      "API Dev",
+      "UI/UX",
+      "Testing",
+    ],
     datasets: [
       {
         label: "Progress %",
-        data: [85, 72, 90, 65, 45],
-        backgroundColor: [
+        data: stats.projectProgress?.map((p) => p.progress) || [
+          85, 72, 90, 65, 45,
+        ],
+        backgroundColor: stats.projectProgress?.map((p) =>
+          p.progress > 0 ? "rgba(59,130,246,0.8)" : "rgba(107,114,128,0.5)"
+        ) || [
           "rgba(59,130,246,0.8)",
           "rgba(16,185,129,0.8)",
           "rgba(245,158,11,0.8)",
           "rgba(139,92,246,0.8)",
           "rgba(239,68,68,0.8)",
         ],
-        borderColor: [
+        borderColor: stats.projectProgress?.map((p) =>
+          p.progress > 0 ? "rgba(59,130,246,1)" : "rgba(107,114,128,1)"
+        ) || [
           "rgba(59,130,246,1)",
           "rgba(16,185,129,1)",
           "rgba(245,158,11,1)",
@@ -226,7 +193,15 @@ const Dashboard = () => {
     labels: ["Completed", "In Progress", "Pending", "QA"],
     datasets: [
       {
-        data: [stats.tasks.completed, stats.tasks.inProgress, stats.tasks.pending, 8],
+        data: [
+          stats.tasks?.completed || 0,
+          stats.tasks?.inProgress || 0,
+          stats.tasks?.pending || 0,
+          (stats.tasks?.total || 0) -
+            ((stats.tasks?.completed || 0) +
+              (stats.tasks?.inProgress || 0) +
+              (stats.tasks?.pending || 0)),
+        ],
         backgroundColor: [
           "rgba(16,185,129,0.8)",
           "rgba(59,130,246,0.8)",
@@ -250,18 +225,18 @@ const Dashboard = () => {
     scales: { y: { beginAtZero: true, max: 100 } },
   };
 
-  const doughnutOptions = { responsive: true, plugins: { legend: { position: "bottom" } } };
-
-  const BLUE = 'rgba(59,130,246,0.8)';
-  const GRAY = 'rgba(107,114,128,0.5)';
-  const BLUE_B = 'rgba(59,130,246,1)';
-  const GRAY_B = 'rgba(107,114,128,1)';
+  const doughnutOptions = {
+    responsive: true,
+    plugins: { legend: { position: "bottom" } },
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Dashboard
+        </h1>
         <div className="text-sm text-gray-500 dark:text-gray-400">
           Last updated: {new Date().toLocaleString()}
         </div>
@@ -272,33 +247,33 @@ const Dashboard = () => {
         <StatCard
           icon={FolderOpen}
           title="Active Projects"
-          value={stats.projects.active}
-          subtitle={`${stats.projects.total} total`}
+          value={stats?.projects?.active || 0}
+          subtitle={`${stats?.projects?.total || 0} total`}
           color="blue"
           trend="+12% from last month"
         />
         <StatCard
           icon={CheckSquare}
           title="Pending Tasks"
-          value={stats.tasks.pending}
-          subtitle={`${stats.tasks.total} total`}
+          value={stats?.tasks?.pending || 0}
+          subtitle={`${stats?.tasks?.total || 0} total`}
           color="green"
           trend="-5% from last week"
         />
         <StatCard
           icon={Target}
           title="Upcoming Milestones"
-          value={stats.milestones.upcoming}
-          subtitle={`${stats.milestones.overdue} overdue`}
+          value={stats?.milestones?.upcoming || 0}
+          subtitle={`${stats?.milestones?.overdue || 0} overdue`}
           color="yellow"
         />
         <StatCard
           icon={AlertTriangle}
           title="Red Zone Alerts"
-          // number of employees in the red zone:
-          value={redZoneEntries.length}
-          // optionally show total "open tasks" affected:
-          subtitle={`${redZoneEntries.length} Projects affected`}
+          value={Array.isArray(redZoneEntries) ? redZoneEntries.length : 0}
+          subtitle={`${
+            Array.isArray(redZoneEntries) ? redZoneEntries.length : 0
+          } Projects affected`}
           color="red"
         />
       </div>
@@ -309,80 +284,34 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Project Progress
           </h3>
-          {/* <Bar data={projectProgressData} options={chartOptions} /> */}
-          <Bar
-            data={{
-              labels: stats.projectProgress.map(p => p.name),
-              datasets: [{
-                label: 'Progress %',
-                data: stats.projectProgress.map(p => p.progress),
-                backgroundColor: stats.projectProgress.map(p =>
-                  p.progress > 0 ? BLUE : GRAY
-                ),
-                borderColor: stats.projectProgress.map(p =>
-                  p.progress > 0 ? BLUE_B : GRAY_B
-                ),
-                borderWidth: 1,
-                minBarLength: 5
-              }]
-            }}
-            options={chartOptions}
-          />
+          <Bar data={projectProgressData} options={chartOptions} />
         </div>
-
         <div className="card">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Task Distribution
           </h3>
-          {/* <Doughnut data={taskStatusData} options={doughnutOptions} /> */}
-          <Doughnut
-            data={{
-              labels: ['Completed', 'In Progress', 'Pending', 'QA'],
-              datasets: [{
-                data: [
-                  stats.tasks.completed,
-                  stats.tasks.inProgress,
-                  stats.tasks.pending,
-                  stats.tasks.total -
-                  (stats.tasks.completed +
-                    stats.tasks.inProgress +
-                    stats.tasks.pending)
-                ],
-                // reuse four distinct colors
-                backgroundColor: [
-                  'rgba(16,185,129,0.8)',
-                  'rgba(59,130,246,0.8)',
-                  'rgba(245,158,11,0.8)',
-                  'rgba(139,92,246,0.8)'
-                ],
-                borderColor: [
-                  'rgba(16,185,129,1)',
-                  'rgba(59,130,246,1)',
-                  'rgba(245,158,11,1)',
-                  'rgba(139,92,246,1)'
-                ],
-                borderWidth: 2
-              }]
-            }}
-            options={doughnutOptions}
-          />
+          <Doughnut data={taskStatusData} options={doughnutOptions} />
         </div>
       </div>
 
       {/* Activity & Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* <RecentActivity /> */}
-        {/* <RedZoneAlerts redZone={stats.redZone} /> */}
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Recent Activity
+          </h3>
           <div className="space-y-4">
-            {stats.recentActivities.map((act, i) => (
-              <div key={i} className="flex items-center space-x-3 cursor-pointer hover:bg-gray-600 p-2 rounded-md transition-colors duration-300">
+            {stats?.recentActivities?.map((act, i) => (
+              <div
+                key={i}
+                className="flex items-center space-x-3 cursor-pointer hover:bg-gray-600 p-2 rounded-md transition-colors duration-300"
+              >
                 <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
                   <Clock className="w-4 h-4 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div className="flex-1 text-sm text-gray-900 dark:text-white">
-                  <span className="font-medium">{act.user}</span> {act.action} <span className="font-medium">{act.item}</span>
+                  <span className="font-medium">{act.user}</span> {act.action}{" "}
+                  <span className="font-medium">{act.item}</span>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     {new Date(act.time).toLocaleString()}
                   </div>
@@ -399,47 +328,50 @@ const Dashboard = () => {
             </h3>
             <AlertTriangle className="w-5 h-5 text-red-500" />
           </div>
-
-          {redZoneEntries.length === 0 ? (
+          {Array.isArray(redZoneEntries) && redZoneEntries.length === 0 ? (
             <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <p className="mb-2 text-xl">🎉 No one is in the red zone!</p>
               <p className="text-sm">All team members are on track.</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {redZoneEntries?.map((al, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {al.employee.firstName} {al.employee.lastName}
-                    </p>
-                    <p className="text-sm text-red-600 dark:text-red-400">
-                      {al.reason}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-2 justify-center items-center">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${al.intensity === 'high'
-                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+              {(Array.isArray(redZoneEntries) ? redZoneEntries : []).map(
+                (al) => (
+                  <div
+                    key={al.id} // Assumes al.id is unique
+                    className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {al.employee.firstName} {al.employee.lastName}
+                      </p>
+                      <p className="text-sm text-red-600 dark:text-red-400">
+                        {al.reason}
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-2 justify-center items-center">
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          al.intensity === "high"
+                            ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                         }`}
-                    >
-                      {al.intensity}
-                    </span>
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${al.intensity === 'high'
-                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                      >
+                        {al.intensity}
+                      </span>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          al.intensity === "high"
+                            ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                         }`}
-                    >
-                      {al.isResolved ? 'Resolved' : 'Pending'}
-                    </span>
+                      >
+                        {al.isResolved ? "Resolved" : "Pending"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           )}
         </div>

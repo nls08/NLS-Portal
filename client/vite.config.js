@@ -6,11 +6,11 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api": {
+      api: {
         target: "https://nls-portal-psi.vercel.app",
         changeOrigin: true,
       },
-      "/ws": {
+      ws: {
         // target: "ws://localhost:5000",
         target: "ws://nls-portal-psi.vercel.app",
         ws: true,
