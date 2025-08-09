@@ -1,6 +1,6 @@
 import express from "express";
 import Project from "../models/Project.js";
-// import { broadcast } from '../server.js';
+// import { broadcast } from '../server.js'; // Comment out or remove for now
 import { requireAuth } from "@clerk/express";
 import User from "../models/User.js";
 import mongoose from "mongoose";
@@ -54,10 +54,13 @@ router.post("/", requireAuth(), requireSuperAdmin, async (req, res) => {
     // 3) populate assignee for the response
     await project.populate("assignee", "firstName lastName imageUrl email");
 
-    broadcast({
-      type: "notification",
-      message: `New project: ${project.name}`,
-    });
+    // Conditionally broadcast (only for local development)
+    if (process.env.NODE_ENV !== "production") {
+      // broadcast({
+      //   type: "notification",
+      //   message: `New project: ${project.name}`,
+      // });
+    }
 
     res.status(201).json(project);
   } catch (err) {
@@ -74,7 +77,10 @@ router.put("/:id", requireAuth(), requireSuperAdmin, async (req, res) => {
       { new: true, runValidators: true }
     ).populate("assignee");
     if (!project) return res.status(404).json({ error: "Not found" });
-    broadcast({ type: "status_update", message: `Updated: ${project.name}` });
+    // Conditionally broadcast
+    if (process.env.NODE_ENV !== "production") {
+      // broadcast({ type: "status_update", message: `Updated: ${project.name}` });
+    }
     res.json(project);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -88,7 +94,6 @@ router.delete("/:id", requireAuth(), requireSuperAdmin, async (req, res) => {
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
     res.json({ message: "Project deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
