@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { WebSocketServer } from "ws";
 import http from "http";
 import "dotenv/config.js";
 import mongoose from "mongoose";
@@ -28,12 +29,19 @@ import uploadRoutes from "./routes/uploads.js";
 import clientMilestoneRoutes from "./routes/clientMilestone.js";
 import adminRoutes from "./routes/admin.js";
 
+// dotenv.config();
+
 const app = express();
 const server = http.createServer(app);
-// const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ server });
 
 // Middleware
-app.use(cors()); // Updated to remove local origin restriction
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(clerkMiddleware());
 
@@ -43,8 +51,7 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// WebSocket connection handling (commented out)
-/*
+// WebSocket connection handling
 const clients = new Map();
 
 wss.on("connection", (ws) => {
@@ -70,10 +77,8 @@ wss.on("connection", (ws) => {
     console.log("WebSocket connection closed");
   });
 });
-*/
 
-// Broadcast function for real-time notifications (commented out)
-/*
+// Broadcast function for real-time notifications
 export const broadcast = (message) => {
   clients.forEach((client, ws) => {
     if (ws.readyState === ws.OPEN) {
@@ -81,10 +86,6 @@ export const broadcast = (message) => {
     }
   });
 };
-*/
-
-// Add default route to handle root URL
-app.get("/", (req, res) => res.redirect("/api/health"));
 
 // Routes
 app.use("/api/projects", projectRoutes);
@@ -114,9 +115,17 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
-const PORT = process.env.PORT || 5000;
+// Add default root route
+app.get("/", (req, res) => res.send("Server is running"));
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  // console.log(`WebSocket server running on ws://localhost:${PORT}`); // Commented out
-});
+// Export for Vercel
+export default app;
+
+// Local development server (only run if not in Vercel environment)
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`WebSocket server running on ws://localhost:${PORT}`);
+  });
+}
