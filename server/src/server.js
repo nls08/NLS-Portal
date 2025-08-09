@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { WebSocketServer } from "ws";
 import http from "http";
 import "dotenv/config.js";
 import mongoose from "mongoose";
@@ -27,21 +26,14 @@ import earningRoutes from "./routes/earning.js";
 import advanceRoutes from "./routes/advance.js";
 import uploadRoutes from "./routes/uploads.js";
 import clientMilestoneRoutes from "./routes/clientMilestone.js";
-import adminRoutes from './routes/admin.js';
-
-// dotenv.config();
+import adminRoutes from "./routes/admin.js";
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+// const wss = new WebSocketServer({ server });
 
 // Middleware
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+app.use(cors()); // Updated to remove local origin restriction
 app.use(express.json());
 app.use(clerkMiddleware());
 
@@ -51,7 +43,8 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// WebSocket connection handling
+// WebSocket connection handling (commented out)
+/*
 const clients = new Map();
 
 wss.on("connection", (ws) => {
@@ -77,8 +70,10 @@ wss.on("connection", (ws) => {
     console.log("WebSocket connection closed");
   });
 });
+*/
 
-// Broadcast function for real-time notifications
+// Broadcast function for real-time notifications (commented out)
+/*
 export const broadcast = (message) => {
   clients.forEach((client, ws) => {
     if (ws.readyState === ws.OPEN) {
@@ -86,6 +81,10 @@ export const broadcast = (message) => {
     }
   });
 };
+*/
+
+// Add default route to handle root URL
+app.get("/", (req, res) => res.redirect("/api/health"));
 
 // Routes
 app.use("/api/projects", projectRoutes);
@@ -99,16 +98,16 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/red-zone", redZoneRoutes);
 app.use("/api/kpi", kpiRoutes);
 app.use("/api/performance", performanceRoutes);
-app.use('/api/feedbacks', feedbackRoutes);
-app.use('/api/personal-tasks', personalTasksRoutes);
-app.use('/api/reminders', reminderRoutes);
-app.use('/api/donations', donationRoutes);
-app.use('/api/finance', expenseRoutes);
-app.use('/api/earnings', earningRoutes);
-app.use('/api/advance', advanceRoutes);
-app.use('/api/cloudinary', uploadRoutes);
-app.use('/api/client-milestones', clientMilestoneRoutes);
-app.use('/api/admin', adminRoutes);
+app.use("/api/feedbacks", feedbackRoutes);
+app.use("/api/personal-tasks", personalTasksRoutes);
+app.use("/api/reminders", reminderRoutes);
+app.use("/api/donations", donationRoutes);
+app.use("/api/finance", expenseRoutes);
+app.use("/api/earnings", earningRoutes);
+app.use("/api/advance", advanceRoutes);
+app.use("/api/cloudinary", uploadRoutes);
+app.use("/api/client-milestones", clientMilestoneRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -119,5 +118,5 @@ const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`WebSocket server running on ws://localhost:${PORT}`);
+  // console.log(`WebSocket server running on ws://localhost:${PORT}`); // Commented out
 });
