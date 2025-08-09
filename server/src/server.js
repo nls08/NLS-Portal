@@ -29,8 +29,6 @@ import uploadRoutes from "./routes/uploads.js";
 import clientMilestoneRoutes from "./routes/clientMilestone.js";
 import adminRoutes from "./routes/admin.js";
 
-// dotenv.config();
-
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
@@ -38,12 +36,18 @@ const wss = new WebSocketServer({ server });
 // Middleware
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(clerkMiddleware());
+
+// Add debug middleware to log request paths
+app.use((req, res, next) => {
+  console.log(`Request path: ${req.path}`);
+  next();
+});
 
 // MongoDB connection
 mongoose
@@ -118,10 +122,16 @@ app.get("/api/health", (req, res) => {
 // Add default root route
 app.get("/", (req, res) => res.send("Server is running"));
 
+// Add fallback route to catch unhandled paths
+app.use((req, res) => {
+  console.log(`Unhandled path: ${req.path}`);
+  res.status(404).json({ error: "Route not found" });
+});
+
 // Export for Vercel
 export default app;
 
-// Local development server (only run if not in Vercel environment)
+// Local development server with WebSocket (only run if not in Vercel environment)
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
