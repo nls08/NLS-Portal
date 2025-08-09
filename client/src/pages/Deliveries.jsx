@@ -256,7 +256,7 @@ const Deliveries = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {deliveries.map((delivery) => (
+          {deliveries?.map((delivery) => (
             <div key={`${delivery.type}-${delivery.id}`} className="card hover:shadow-lg transition-shadow duration-200">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
@@ -301,7 +301,7 @@ const Deliveries = () => {
                   <div className="flex items-center -space-x-2">
                     {Array.isArray(delivery.deliveredBy) ? (
                       delivery.deliveredBy.length > 0 ? (
-                        delivery.deliveredBy.map((user) => (
+                        delivery.deliveredBy?.map((user) => (
                           user.imageUrl ? (
                             <img
                               key={user.id}
@@ -453,7 +453,7 @@ const Deliveries = () => {
                   </h3>
                   <div className="space-y-4">
                     {Array.isArray(selectedDelivery?.originalData.assignee) ? (
-                      selectedDelivery?.originalData.assignee.map((assignee, index) => (
+                      selectedDelivery?.originalData.assignee?.map((assignee, index) => (
                         <div key={index} className="flex items-center gap-4">
                           {assignee.imageUrl && (
                             <img
@@ -560,7 +560,7 @@ const Deliveries = () => {
                     Tasks ({selectedDelivery?.originalData.todos.filter(t => t.completed).length}/{selectedDelivery?.originalData.todos.length})
                   </h3>
                   <div className="space-y-2">
-                    {selectedDelivery?.originalData.todos.map((todo) => (
+                    {selectedDelivery?.originalData.todos?.map((todo) => (
                       <div key={todo._id} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
                         <div className={`w-4 h-4 rounded-full flex items-center justify-center ${todo.completed ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-500'}`}>
                           {todo.completed && <CheckCircle className="w-3 h-3 text-white" />}

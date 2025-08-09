@@ -279,21 +279,21 @@ export default function FinanceManagement() {
       if (editingItem) {
         if (formType === "expense") {
           setExpenses(
-            expenses.map((item) =>
+            expenses?.map((item) =>
               item._id === editingItem._id ? response : item
             )
           );
           toast.success("Expense updated successfully");
         } else if (formType === "earning") {
           setEarnings(
-            earnings.map((item) =>
+            earnings?.map((item) =>
               item._id === editingItem._id ? response : item
             )
           );
           toast.success("Earning updated successfully");
         } else if (formType === "advance") {
           setAdvances(
-            advances.map((item) =>
+            advances?.map((item) =>
               item._id === editingItem._id ? response : item
             )
           );
@@ -448,7 +448,7 @@ export default function FinanceManagement() {
                     disabled={loading}
                   >
                     <option value="">Select Category</option>
-                    {expenseCategories.map((cat, index) => (
+                    {expenseCategories?.map((cat, index) => (
                       <option key={index} value={cat}>
                         {cat.charAt(0).toUpperCase() + cat.slice(1)}
                       </option>
@@ -777,7 +777,7 @@ export default function FinanceManagement() {
 
         {/* Navigation Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
-          {["overview", "expenses", "earnings", "advances", "feedbacks"].map((tab) => (
+          {["overview", "expenses", "earnings", "advances", "feedbacks"]?.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -821,7 +821,7 @@ export default function FinanceManagement() {
               <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
                 <h3 className="text-xl font-semibold mb-4">Recent Expenses</h3>
                 <div className="space-y-3">
-                  {expenses.slice(0, 5).map((expense) => (
+                  {expenses.slice(0, 5)?.map((expense) => (
                     <div
                       key={expense._id}
                       className="flex justify-between items-center py-2 border-b border-gray-700 last:border-b-0"
@@ -847,7 +847,7 @@ export default function FinanceManagement() {
               <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
                 <h3 className="text-xl font-semibold mb-4">Recent Earnings</h3>
                 <div className="space-y-3">
-                  {earnings.slice(0, 5).map((earning) => (
+                  {earnings.slice(0, 5)?.map((earning) => (
                     <div
                       key={earning._id}
                       className="flex justify-between items-center py-2 border-b border-gray-700 last:border-b-0"
@@ -882,7 +882,7 @@ export default function FinanceManagement() {
               <ExpensesByCategory />
             </div>
             <div className="divide-y divide-gray-700">
-              {expenses.map((expense) => (
+              {expenses?.map((expense) => (
                 <div
                   key={expense._id}
                   className="p-6 flex justify-between items-center"
@@ -939,7 +939,7 @@ export default function FinanceManagement() {
               <h2 className="text-xl font-semibold">All Earnings</h2>
             </div>
             <div className="divide-y divide-gray-700">
-              {earnings.map((earning) => (
+              {earnings?.map((earning) => (
                 <div
                   key={earning._id}
                   className="p-6 flex justify-between items-center"
@@ -997,7 +997,7 @@ export default function FinanceManagement() {
               <h2 className="text-xl font-semibold">Employee Advances</h2>
             </div>
             <div className="divide-y divide-gray-700">
-              {advances.map((advance) => (
+              {advances?.map((advance) => (
                 <div key={advance._id} className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
@@ -1109,7 +1109,7 @@ export default function FinanceManagement() {
                     <div>
                       <h4 className="font-medium mb-2">Payment History</h4>
                       <div className="space-y-2">
-                        {advance.payments.map((payment, index) => (
+                        {advance.payments?.map((payment, index) => (
                           <div
                             key={index}
                             className="flex justify-between items-center bg-gray-700 rounded-lg p-3"

@@ -27,7 +27,9 @@ import earningRoutes from "./routes/earning.js";
 import advanceRoutes from "./routes/advance.js";
 import uploadRoutes from "./routes/uploads.js";
 import clientMilestoneRoutes from "./routes/clientMilestone.js";
-import adminRoutes from "./routes/admin.js";
+import adminRoutes from './routes/admin.js';
+
+// dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
@@ -97,16 +99,16 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/red-zone", redZoneRoutes);
 app.use("/api/kpi", kpiRoutes);
 app.use("/api/performance", performanceRoutes);
-app.use("/api/feedbacks", feedbackRoutes);
-app.use("/api/personal-tasks", personalTasksRoutes);
-app.use("/api/reminders", reminderRoutes);
-app.use("/api/donations", donationRoutes);
-app.use("/api/finance", expenseRoutes);
-app.use("/api/earnings", earningRoutes);
-app.use("/api/advance", advanceRoutes);
-app.use("/api/cloudinary", uploadRoutes);
-app.use("/api/client-milestones", clientMilestoneRoutes);
-app.use("/api/admin", adminRoutes);
+app.use('/api/feedbacks', feedbackRoutes);
+app.use('/api/personal-tasks', personalTasksRoutes);
+app.use('/api/reminders', reminderRoutes);
+app.use('/api/donations', donationRoutes);
+app.use('/api/finance', expenseRoutes);
+app.use('/api/earnings', earningRoutes);
+app.use('/api/advance', advanceRoutes);
+app.use('/api/cloudinary', uploadRoutes);
+app.use('/api/client-milestones', clientMilestoneRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -119,5 +121,3 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`WebSocket server running on ws://localhost:${PORT}`);
 });
-
-export default server;

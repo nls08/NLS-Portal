@@ -186,7 +186,7 @@ const QARevision = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64 dark:text-white">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
         <div className="ml-4 text-lg">Loading QA Revisions…</div>
       </div>

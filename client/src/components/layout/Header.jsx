@@ -49,7 +49,7 @@ const Header = ({ onMenuClick }) => {
           </button>
           {toggle && (
             <div className="absolute top-16 right-6 bg-gray-800 dark:bg-gray-700 p-4 rounded-md space-y-4">
-              {stats.recentActivities.map((act, i) => (
+              {stats.recentActivities?.map((act, i) => (
                 <div
                   key={i}
                   className="flex items-center space-x-3 cursor-pointer hover:bg-gray-600 p-2 rounded-md transition-colors duration-300"
