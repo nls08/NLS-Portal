@@ -58,38 +58,38 @@ mongoose
 // WebSocket connection handling
 const clients = new Map();
 
-wss.on("connection", (ws) => {
-  console.log("New WebSocket connection");
+// wss.on("connection", (ws) => {
+//   console.log("New WebSocket connection");
 
-  ws.on("message", (message) => {
-    try {
-      const data = JSON.parse(message);
-      if (data.type === "auth") {
-        clients.set(ws, {
-          userId: data.userId,
-          userName: data.userName,
-        });
-        console.log(`User ${data.userName} connected`);
-      }
-    } catch (error) {
-      console.error("WebSocket message error:", error);
-    }
-  });
+//   ws.on("message", (message) => {
+//     try {
+//       const data = JSON.parse(message);
+//       if (data.type === "auth") {
+//         clients.set(ws, {
+//           userId: data.userId,
+//           userName: data.userName,
+//         });
+//         console.log(`User ${data.userName} connected`);
+//       }
+//     } catch (error) {
+//       console.error("WebSocket message error:", error);
+//     }
+//   });
 
-  ws.on("close", () => {
-    clients.delete(ws);
-    console.log("WebSocket connection closed");
-  });
-});
+//   ws.on("close", () => {
+//     clients.delete(ws);
+//     console.log("WebSocket connection closed");
+//   });
+// });
 
 // Broadcast function for real-time notifications
-export const broadcast = (message) => {
-  clients.forEach((client, ws) => {
-    if (ws.readyState === ws.OPEN) {
-      ws.send(JSON.stringify(message));
-    }
-  });
-};
+// export const broadcast = (message) => {
+//   clients.forEach((client, ws) => {
+//     if (ws.readyState === ws.OPEN) {
+//       ws.send(JSON.stringify(message));
+//     }
+//   });
+// };
 
 // Routes
 app.use("/api/projects", projectRoutes);
