@@ -48,12 +48,12 @@ router.post("/", requireAuth(), async (req, res) => {
     await task.save();
 
     // Broadcast notification
-    broadcast({
-      type: "task_assigned",
-      taskName: task.title,
-      assignee: task.assignee,
-      message: `New task assigned: ${task.title}`,
-    });
+    // broadcast({
+    //   type: "task_assigned",
+    //   taskName: task.title,
+    //   assignee: task.assignee,
+    //   message: `New task assigned: ${task.title}`,
+    // });
 
     res.status(201).json(task);
   } catch (error) {
