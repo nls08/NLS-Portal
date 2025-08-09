@@ -41,7 +41,7 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(clerkMiddleware());
+// app.use(clerkMiddleware());
 
 // Add debug middleware to log request paths
 app.use((req, res, next) => {
